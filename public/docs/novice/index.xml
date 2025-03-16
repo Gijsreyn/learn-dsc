@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Learn DSC – Becoming the &#34;Learner&#34;</title>
+    <link>http://localhost:1313/docs/novice/</link>
+    <description>Recent content in Becoming the &#34;Learner&#34; on Learn DSC</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    
+	  <atom:link href="http://localhost:1313/docs/novice/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+  </channel>
+</rss>
