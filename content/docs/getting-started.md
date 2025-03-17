@@ -3,6 +3,56 @@ title: Getting Started
 weight: 1
 ---
 
+## Installing DSC for Windows using GitHub
+
+To install DSC using GitHub, go through the following steps:
+
+### Step 1 - Determine your OS architecture
+
+There are multiple ways to determine the operating system (OS) architecture. The following three demonstrate using the command prompt PowerShell, or msinfo.
+
+1. Open a command prompt and type `echo %PROCESSOR_ARCHITECTURE%`.
+2. Open a PowerShell terminal session and type: `[System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture`.
+3. In your Quick Start menu, type in `msinfo32.exe` and locate the `System Type` property.
+
+### Step 2 - Download the asset
+
+After you've determined your OS architecture, it's time to download the release asset from GitHub.
+
+1. Open the following [link](https://github.com/PowerShell/DSC/releases/) in your favorite browser.
+2. Select the version you want to download and scroll-down.
+3. Expand the "Assets" and press the asset relevant to your OS architecture.
+
+    {{< figure
+      src="/images/github-download-asset.png"
+      alt="GitHub download asset"
+      caption="Figure 1: GitHub release assets"
+    >}}
+
+4. Save the file to your "Downloads" folder.
+
+### Step 3 - Expand the archive and add to PATH
+
+When the download is finished, you can expand the files to extract it towards your application data folder.
+
+1. Right-click the file and select "Extract All..."
+2. Extract the files to `C:\Users\<userProfile>\AppData\Local\dsc` by replacing the `<userProfile>` with your profile name
+3. Open a command prompt and type `rundll32.exe sysdm.cpl,EditEnvironmentVariables` to open the environment variables.
+4. In your user variables, edit your `PATH` environment variable and include the path `C:\Users\<userProfile>\AppData\Local\dsc`.
+
+### Step 4 - Verify the installation
+
+1. Open a command prompt or PowerShell terminal session.
+2. Type `dsc --version`
+
+This should return the DSC version installed.
+
+{{< figure
+      src="/images/dsc-version.png"
+      alt="DSC version"
+      caption="Figure 2: The DSC version installed"
+>}}
+
 ## Quick Start from Template
 
 {{< icon "github" >}}&nbsp;[imfing/hextra-starter-template](https://github.com/imfing/hextra-starter-template)
