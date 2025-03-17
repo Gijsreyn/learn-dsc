@@ -1,6 +1,6 @@
 ---
-title: The Basics
-weight: 2
+title: The Jedi Initiate
+weight: 1
 prev: /docs/getting-started
 next: /docs/guide/organize-files
 sidebar:
