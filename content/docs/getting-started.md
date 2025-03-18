@@ -277,7 +277,7 @@ This should return the DSC version installed.
 > [!NOTE]
 > These steps have been tested on MacOS 15 Sequoia.
 
-## Next
+## Next Up
 
 Explore the following sections to start adding more contents:
 
