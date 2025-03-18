@@ -3,25 +3,25 @@ title: Getting Started
 weight: 1
 ---
 
-## Installing DSC for Windows using GitHub
+## Installing DSC for Windows from GitHub
 
-To install DSC using GitHub, go through the following steps:
+To install DSC for Windows from GitHub, follow these steps:
 
 ### Step 1 - Determine your OS architecture
 
 There are multiple ways to determine the operating system (OS) architecture. The following three demonstrate using the command prompt PowerShell, or msinfo.
 
-1. Open a command prompt and type `echo %PROCESSOR_ARCHITECTURE%`.
+1. Open a command prompt and type: `echo %PROCESSOR_ARCHITECTURE%`.
 2. Open a PowerShell terminal session and type: `[System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture`.
-3. In your Quick Start menu, type in `msinfo32.exe` and locate the `System Type` property.
+3. In your Quick Start menu, type in `msinfo32.exe` and locate the `System Type` property in the System Summary.
 
 ### Step 2 - Download the asset
 
-After you've determined your OS architecture, it's time to download the release asset from GitHub.
+After determining your OS architecture, proceed to download the release asset from GitHub.
 
 1. Open the following [link](https://github.com/PowerShell/DSC/releases/) in your favorite browser.
 2. Select the version you want to download and scroll-down.
-3. Expand the "Assets" and press the asset relevant to your OS architecture.
+3. Expand the _Assets_ and press the asset relevant to your OS architecture.
 
     {{< figure
       src="/images/github-download-asset.png"
@@ -29,21 +29,25 @@ After you've determined your OS architecture, it's time to download the release 
       caption="Figure 1: GitHub release assets"
     >}}
 
-4. Save the file to your "Downloads" folder.
+4. Save the file to your _Downloads_ folder.
 
 ### Step 3 - Expand the archive and add to PATH
 
-When the download is finished, you can expand the files to extract it towards your application data folder.
+When the download is finished, you can expand the files to extract them to your application data folder.
 
-1. Right-click the file and select "Extract All..."
-2. Extract the files to `C:\Users\<userProfile>\AppData\Local\dsc` by replacing the `<userProfile>` with your profile name
+1. Right-click the file and select _Extract All..._
+2. Extract the files to `C:\Users\<userProfile>\AppData\Local\dsc` by replacing the `<userProfile>` with your profile name.
 3. Open a command prompt and type `rundll32.exe sysdm.cpl,EditEnvironmentVariables` to open the environment variables.
 4. In your user variables, edit your `PATH` environment variable and include the path `C:\Users\<userProfile>\AppData\Local\dsc`.
 
 ### Step 4 - Verify the installation
 
 1. Open a command prompt or PowerShell terminal session.
-2. Type `dsc --version`
+2. Type `dsc --version`:
+
+  ```powershell
+  dsc --version
+  ```
 
 This should return the DSC version installed.
 
@@ -53,188 +57,232 @@ This should return the DSC version installed.
       caption="Figure 2: The DSC version installed"
 >}}
 
-## Quick Start from Template
+> [!IMPORTANT]
+> After the files are extracted, make sure the files are unblocked in your file system.
 
-{{< icon "github" >}}&nbsp;[imfing/hextra-starter-template](https://github.com/imfing/hextra-starter-template)
+## Installing DSC for Windows using PowerShell
 
-You could quickly get started by using the above template repository.
+To install DSC for Windows using PowerShell, you can run the following options in a PowerShell terminal session.
 
-<img src="https://docs.github.com/assets/cb-77734/mw-1440/images/help/repository/use-this-template-button.webp" width="500">
+### Option 1 - Using PSDSC module
 
-We have provided a [GitHub Actions workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow) which can help automatically build and deploy your site to GitHub Pages, and host it for free.
-For more options, check out [Deploy Site](../guide/deploy-site).
+To install DSC using the PSDSC module, follow the below steps:
 
-[🌐 Demo ↗](https://imfing.github.io/hextra-starter-template/)
+1. Open a PowerShell terminal session
+2. Install the `PSDSC` module by typing: `Install-PSResource -Name PSDSC`
 
-## Start as New Project
+  ```powershell
+  Install-PSResource -Name PSDSC
+  ```
 
-There are two main ways to add the Hextra theme to your Hugo project:
+3. Execute `Install-DscExe`
+  
+  ```powershell
+  Install-DscExe
+  ```
 
-1. **Hugo Modules (Recommended)**: The simplest and recommended method. [Hugo modules](https://gohugo.io/hugo-modules/) let you pull in the theme directly from its online source. Theme is downloaded automatically and managed by Hugo.
+> [!IMPORTANT]
+> Don't confuse the `PSDSC` module for the `PSDesiredStateConfiguration`.
 
-2. **Git Submodule**: Alternatively, add Hextra as a [Git Submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). The theme is downloaded by Git and stored in your project's `themes` folder.
+### Option 2 - Use PowerShell script
 
-### Setup Hextra as Hugo module
+To install DSC using a PowerShell script, open a PowerShell terminal session and copy paste the following:
 
-#### Prerequisites
+```powershell
+# Define the GitHub repository and the asset pattern to download
+$repo = "PowerShell/DSC"
+$assetPattern = "dsc-win-.*.zip"
 
-Before starting, you need to have the following software installed:
+# Get the latest release information from GitHub API
+$release = Invoke-RestMethod -Uri "https://api.github.com/repos/$repo/releases/latest"
 
-- [Hugo (extended version)](https://gohugo.io/installation/)
-- [Git](https://git-scm.com/)
-- [Go](https://go.dev/)
+$assetPattern = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64')
+{
+  'DSC-*-aarch64-pc-windows-msvc.zip'
+}
+else
+{
+  'DSC-*-x86_64-pc-windows-msvc.zip'
+}
 
-#### Steps
+# Find the asset that matches the pattern
+$asset = $release.assets | Where-Object { $_.name -like $assetPattern }
 
-{{% steps %}}
+if ($asset)
+{
+  # Download the asset
+  $assetUrl = $asset.browser_download_url
+  $downloadPath = Join-Path -Path $env:TEMP -ChildPath $asset.name
+  Invoke-RestMethod -Uri $assetUrl -OutFile $downloadPath
 
-### Initialize a new Hugo site
+  # Define the extraction path
+  $extractPath = Join-Path -Path $env:LOCALAPPDATA -ChildPath 'dsc'
 
-```shell
-hugo new site my-site --format=yaml
+  # Create the extraction directory if it doesn't exist
+  if (-not (Test-Path -Path $extractPath)) {
+    New-Item -ItemType Directory -Path $extractPath
+  }
+
+  # Extract the downloaded zip file
+  if (Get-Command -Name 'Expand-Archive')
+  {
+    Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
+  }
+  else 
+  {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($downloadPath, $extractPath)
+  }
+
+  # Clean up the downloaded zip file
+  Remove-Item -Path $downloadPath -ErrorAction SilentlyContinue
+
+  # Unblock all files
+  Get-ChildItem -Path $extractPath -Recurse | Unblock-File
+
+  # Add to PATH
+  $env:PATH += ";$extractPath"
+}
 ```
 
-### Configure Hextra theme via module
+## Installing DSC on Linux
 
-```shell
-# initialize hugo module
-cd my-site
-hugo mod init github.com/username/my-site
+To install DSC on Linux, follow these steps:
 
-# add Hextra theme
-hugo mod get github.com/imfing/hextra
-```
+### Step 1 - Download the asset
 
-Configure `hugo.yaml` to use Hextra theme by adding the following:
+1. Open a terminal session.
+2. Determine your OS architecture by typing:
 
-```yaml
-module:
-  imports:
-    - path: github.com/imfing/hextra
-```
+  ```shell
+  uname -m
+  ```
 
-### Create your first content pages
+3. Download the DSC release asset using `wget`. Replace `<version>` with the desired version number and `<architecture>` with your OS architecture (e.g., `x86_64`):
 
-Create new content page for the home page and the documentation page:
+  ```shell
+  wget https://github.com/PowerShell/DSC/releases/download/v<version>/DSC-<version>-<architecture>-linux.tar.gz
+  ```
 
-```shell
-hugo new content/_index.md
-hugo new content/docs/_index.md
-```
+### Step 2 - Extract the archive
 
-### Preview the site locally
+1. Create a directory to extract the files:
 
-```shell
-hugo server --buildDrafts --disableFastRender
-```
+  ```shell
+  mkdir dsc
+  ```
 
-Voila, your new site preview is available at `http://localhost:1313/`.
+2. Extract the downloaded tar.gz file to the created directory:
 
-{{% /steps %}}
+  ```shell
+  tar -xvzf DSC-<version>-<architecture>-linux.tar.gz -C dsc
+  ```
 
+### Step 3 - Move files to the appropriate location
 
-{{% details title="How to update theme?" %}}
+1. Move the extracted files to `/usr/local/bin/`:
 
-To update all Hugo modules in your project to their latest versions, run the following command:
+  ```shell
+  sudo mv dsc/* /usr/local/bin/
+  ```
 
-```shell
-hugo mod get -u
-```
+### Step 4 - Update PATH environment variable in .bashrc
 
-To update Hextra to the [latest released version](https://github.com/imfing/hextra/releases), run the following command:
+1. Add the DSC path to your `~/.bashrc` file:
 
-```shell
-hugo mod get -u github.com/imfing/hextra
-```
+  ```shell
+  echo 'export PATH=$PATH:/usr/local/bin/dsc' >> ~/.bashrc
+  ```
 
-See [Hugo Modules](https://gohugo.io/hugo-modules/use-modules/#update-all-modules) for more details.
+2. Optionally, reload the `~/.bashrc` file to apply the changes:
 
-{{% /details %}}
+  ```shell
+  source ~/.bashrc
+  ```
 
-### Setup Hextra as Git submodule
+### Step 5 - Verify the installation
 
-#### Prerequisites
+1. Open a terminal session.
+2. Type `dsc --version` to verify the installation:
 
-Before starting, you need to have the following software installed:
+  ```shell
+  dsc --version
+  ```
 
-- [Hugo (extended version)](https://gohugo.io/installation/)
-- [Git](https://git-scm.com/)
+This should return the DSC version installed.
 
-#### Steps
+> [!NOTE]
+> These steps have been tested on Ubuntu 22.04.
 
-{{% steps %}}
+## Installing DSC on MacOS
 
-### Initialize a new Hugo site
+To install DSC on MacOS, follow these steps:
 
-```shell
-hugo new site my-site --format=yaml
-```
+### Step 1 - Download the asset
 
-### Add Hextra theme as a Git submodule
+1. Open a terminal session.
+2. Download the DSC release asset using `curl`. Replace `<version>` with the desired version number and `<architecture>` with your OS architecture (e.g., `x86_64`):
 
-```shell
-git submodule add https://github.com/imfing/hextra.git themes/hextra
-```
+  ```shell
+  curl -L https://github.com/PowerShell/DSC/releases/download/v<version>/DSC-<version>-<architecture>-apple-darwin.tar.gz -o DSC-<version>-<architecture>-apple-darwin.tar.gz
+  ```
 
-Configure `hugo.yaml` to use Hextra theme by adding the following:
+### Step 2 - Extract the archive
 
-```yaml
-theme: hextra
-```
+1. Create a directory to extract the files:
 
-### Create your first content pages
+  ```shell
+  mkdir dsc
+  ```
 
-Create new content page for the home page and the documentation page:
+2. Extract the downloaded tar.gz file to the created directory:
 
-```shell
-hugo new content/_index.md
-hugo new content/docs/_index.md
-```
+  ```shell
+  tar -xvzf DSC-<version>-<architecture>-apple-darwin.tar.gz -C dsc
+  ```
 
-### Preview the site locally
+### Step 3 - Move files to the appropriate location
 
-```shell
-hugo server --buildDrafts --disableFastRender
-```
+1. Move the extracted files to `/usr/local/bin/`:
 
-Your new site preview is available at `http://localhost:1313/`.
+  ```shell
+  sudo mv dsc/* /usr/local/bin/
+  ```
 
-{{% /steps %}}
+### Step 4 - Update PATH environment variable in .zshrc
 
+1. Add the DSC path to your `~/.zshrc` file:
 
-When using [CI/CD](https://en.wikipedia.org/wiki/CI/CD) for Hugo website deployment, it's essential to ensure that the following command is executed before running the `hugo` command.
+  ```shell
+  echo 'export PATH=$PATH:/usr/local/bin' >> ~/.zshrc
+  ```
 
-```shell
-git submodule update --init
-```
+2. Optionally, reload the `~/.zshrc` file to apply the changes:
 
-Failure to run this command results in the theme folder not being populated with Hextra theme files, leading to a build failure.
+  ```shell
+  source ~/.zshrc
+  ```
 
+### Step 5 - Verify the installation
 
-{{% details title="How to update theme?" %}}
+1. Open a terminal session.
+2. Type `dsc --version` to verify the installation:
 
-To update all submodules in your repository to their latest commits, run the following command:
+  ```shell
+  dsc --version
+  ```
 
-```shell
-git submodule update --remote
-```
+This should return the DSC version installed.
 
-To update Hextra to the latest commit, run the following command:
-
-```shell
-git submodule update --remote themes/hextra
-```
-
-See [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) for more details.
-
-{{% /details %}}
+> [!NOTE]
+> These steps have been tested on MacOS 15 Sequoia.
 
 ## Next
 
 Explore the following sections to start adding more contents:
 
 {{< cards >}}
-  {{< card link="../guide/organize-files" title="Organize Files" icon="document-duplicate" >}}
+  {{< card link="../initiate/level-1-basic-concepts" title="The Basics" icon="document-duplicate" >}}
   {{< card link="../guide/configuration" title="Configuration" icon="adjustments" >}}
   {{< card link="../guide/markdown" title="Markdown" icon="markdown" >}}
 {{< /cards >}}

@@ -1,7 +1,7 @@
 ---
 title: "Level 1: The Basics"
 weight: 2
-prev: /docs/guide
+prev: /docs/getting-started
 ---
 
 ## Directory Structure
