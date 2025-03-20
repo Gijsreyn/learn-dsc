@@ -3,6 +3,8 @@ title: Getting Started
 weight: 1
 ---
 
+Before you are getting started, you need something to work with. For that, you require DSC to be installed on your machine. In the following sections, you can find several ways to install it, wether running Windows, Linux or MacOS. DSC has become more cross-platform than earlier versions.
+
 ## Installing DSC for Windows from GitHub
 
 To install DSC for Windows from GitHub, follow these steps:
@@ -81,6 +83,12 @@ To install DSC using the PSDSC module, follow the below steps:
   Install-DscExe
   ```
 
+This installs DSC in your `"$env:LOCALAPPDAT\dsc"` folder. To verify the result, run `dsc --version`
+
+  ```powershell
+  dsc --version
+  ```
+
 > [!IMPORTANT]
 > Don't confuse the `PSDSC` module for the `PSDesiredStateConfiguration`.
 
@@ -142,6 +150,9 @@ if ($asset)
 
   # Add to PATH
   $env:PATH += ";$extractPath"
+
+  # Verify the installation
+  dsc --version
 }
 ```
 
@@ -279,10 +290,10 @@ This should return the DSC version installed.
 
 ## Next Up
 
-Explore the following sections to start adding more contents:
+You have now successfully installed DSC on your machine. Explore the following sections to start further on your journey.
 
 {{< cards >}}
-  {{< card link="../initiate/level-1-basic-concepts" title="The Basics" icon="document-duplicate" >}}
+  {{< card link="../initiate/level-1-the-basics" title="The Basics" icon="document-duplicate" >}}
   {{< card link="../guide/configuration" title="Configuration" icon="adjustments" >}}
   {{< card link="../guide/markdown" title="Markdown" icon="markdown" >}}
 {{< /cards >}}
