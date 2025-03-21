@@ -210,6 +210,8 @@ To stay up to date with the latest releases, you can check out the official repo
 - Twitter at @dsccommunity
 - Discord in the following link: <https://discordapp.com/invite/AtzXnJM>
 
+If you are not certain about a command, ask it. Run the command you want to use and append `--help` to reveal the help information.
+
 ## Lab Questions
 
 You have now successfully learned about the basics and executed your first DSC resource. It's time to reinforce your understanding by completing the following lab questions:
