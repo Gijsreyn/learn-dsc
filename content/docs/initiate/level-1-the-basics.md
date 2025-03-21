@@ -4,7 +4,7 @@ weight: 2
 prev: /docs/getting-started
 ---
 
-Welcome to the first level of your DSC journey! You should have successfully installed DSC on your machine. It's now time to understand the basics. This level will guide you through the following basic concepts:
+Welcome to temple of your DSC journey! You should have successfully installed DSC on your machine. It's now time to understand the basics. This level will guide you through the following basic concepts:
 
 - The command line interface (CLI) and DSC
 - Executing your first DSC resource
@@ -210,9 +210,9 @@ To stay up to date with the latest releases, you can check out the official repo
 - Twitter at @dsccommunity
 - Discord in the following link: <https://discordapp.com/invite/AtzXnJM>
 
-## Lab Exercise
+## Lab Questions
 
-You have now successfully learned about the basics and executed your first DSC resource. It's time to reinforce your understanding by completing the following lab exercise:
+You have now successfully learned about the basics and executed your first DSC resource. It's time to reinforce your understanding by completing the following lab questions:
 
 1. How can you trace _all_ information when `dsc resource get --resource Microsoft/OSInfo` executes?
 2. What are the amount of possible values for the tracing?
