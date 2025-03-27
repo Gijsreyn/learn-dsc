@@ -1,0 +1,390 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: ResourceManifest
+type: object
+required:
+- $schema
+- type
+- version
+properties:
+  $schema:
+    title: Resource manifest schema URI
+    description: The version of the resource manifest schema.
+    type: string
+    format: uri
+    enum:
+    - https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json
+    - https://aka.ms/dsc/schemas/v3.0/bundled/resource/manifest.json
+    - https://aka.ms/dsc/schemas/v3.0.0/bundled/resource/manifest.json
+    - https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.vscode.json
+    - https://aka.ms/dsc/schemas/v3.0/bundled/resource/manifest.vscode.json
+    - https://aka.ms/dsc/schemas/v3.0.0/bundled/resource/manifest.vscode.json
+    - https://aka.ms/dsc/schemas/v3/resource/manifest.json
+    - https://aka.ms/dsc/schemas/v3.0/resource/manifest.json
+    - https://aka.ms/dsc/schemas/v3.0.0/resource/manifest.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/bundled/resource/manifest.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3.0/bundled/resource/manifest.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3.0.0/bundled/resource/manifest.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/bundled/resource/manifest.vscode.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3.0/bundled/resource/manifest.vscode.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3.0.0/bundled/resource/manifest.vscode.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/manifest.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3.0/resource/manifest.json
+    - https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3.0.0/resource/manifest.json
+  type:
+    description: The namespaced name of the resource.
+    type: string
+  kind:
+    description: The kind of resource.
+    anyOf:
+    - $ref: '#/definitions/Kind'
+    - type: 'null'
+  version:
+    description: The version of the resource using semantic versioning.
+    type: string
+  description:
+    description: The description of the resource.
+    type:
+    - string
+    - 'null'
+  tags:
+    description: Tags for the resource.
+    type:
+    - array
+    - 'null'
+    items:
+      type: string
+  get:
+    description: Details how to call the Get method of the resource.
+    anyOf:
+    - $ref: '#/definitions/GetMethod'
+    - type: 'null'
+  set:
+    description: Details how to call the Set method of the resource.
+    anyOf:
+    - $ref: '#/definitions/SetMethod'
+    - type: 'null'
+  whatIf:
+    description: Details how to call the `WhatIf` method of the resource.
+    anyOf:
+    - $ref: '#/definitions/SetMethod'
+    - type: 'null'
+  test:
+    description: Details how to call the Test method of the resource.
+    anyOf:
+    - $ref: '#/definitions/TestMethod'
+    - type: 'null'
+  delete:
+    description: Details how to call the Delete method of the resource.
+    anyOf:
+    - $ref: '#/definitions/DeleteMethod'
+    - type: 'null'
+  export:
+    description: Details how to call the Export method of the resource.
+    anyOf:
+    - $ref: '#/definitions/ExportMethod'
+    - type: 'null'
+  resolve:
+    description: Details how to call the Resolve method of the resource.
+    anyOf:
+    - $ref: '#/definitions/ResolveMethod'
+    - type: 'null'
+  validate:
+    description: Details how to call the Validate method of the resource.
+    anyOf:
+    - $ref: '#/definitions/ValidateMethod'
+    - type: 'null'
+  adapter:
+    description: Indicates the resource is a adapter of other resources.
+    anyOf:
+    - $ref: '#/definitions/Adapter'
+    - type: 'null'
+  exitCodes:
+    description: Mapping of exit codes to descriptions.  Zero is always success and non-zero is always failure.
+    type:
+    - object
+    - 'null'
+    additionalProperties:
+      type: string
+  schema:
+    description: Details how to get the schema of the resource.
+    anyOf:
+    - $ref: '#/definitions/SchemaKind'
+    - type: 'null'
+additionalProperties: false
+definitions:
+  Kind:
+    type: string
+    enum:
+    - adapter
+    - group
+    - importer
+    - resource
+  GetMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to get the state of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Get.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass optional input for a Get.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+  ArgKind:
+    anyOf:
+    - description: The argument is a string.
+      type: string
+    - description: The argument accepts the JSON input object.
+      type: object
+      required:
+      - jsonInputArg
+      properties:
+        jsonInputArg:
+          description: The argument that accepts the JSON input object.
+          type: string
+        mandatory:
+          description: Indicates if argument is mandatory which will pass an empty string if no JSON input is provided.  Default is false.
+          type:
+          - boolean
+          - 'null'
+  InputKind:
+    oneOf:
+    - description: The input is accepted as environmental variables.
+      type: string
+      enum:
+      - env
+    - description: The input is accepted as a JSON object via STDIN.
+      type: string
+      enum:
+      - stdin
+  SetMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to set the state of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Set.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass required input for a Set.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+      implementsPretest:
+        description: Whether to run the Test method before the Set method.  True means the resource will perform its own test before running the Set method.
+        type:
+        - boolean
+        - 'null'
+      handlesExist:
+        description: Indicates that the resource directly handles `_exist` as a property.
+        type:
+        - boolean
+        - 'null'
+      return:
+        description: The type of return value expected from the Set method.
+        anyOf:
+        - $ref: '#/definitions/ReturnKind'
+        - type: 'null'
+  ReturnKind:
+    oneOf:
+    - description: The return JSON is the state of the resource.
+      type: string
+      enum:
+      - state
+    - description: The return JSON is the state of the resource and the diff.
+      type: string
+      enum:
+      - stateAndDiff
+  TestMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to test the state of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Test.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass required input for a Test.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+      return:
+        description: The type of return value expected from the Test method.
+        anyOf:
+        - $ref: '#/definitions/ReturnKind'
+        - type: 'null'
+  DeleteMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to delete the state of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Delete.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass required input for a Delete.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+  ExportMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to enumerate instances of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Export.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass input for a Export.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+  ResolveMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to enumerate instances of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Export.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass input for a Export.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+  ValidateMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to validate the state of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Validate.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass required input for a Validate.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+  Adapter:
+    type: object
+    required:
+    - config
+    - list
+    properties:
+      list:
+        description: The way to list adapter supported resources.
+        allOf:
+        - $ref: '#/definitions/ListMethod'
+      config:
+        description: Defines how the adapter supports accepting configuraiton.
+        allOf:
+        - $ref: '#/definitions/ConfigKind'
+  ListMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to list resources supported by a group resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a List.
+        type:
+        - array
+        - 'null'
+        items:
+          type: string
+  ConfigKind:
+    oneOf:
+    - description: The adapter accepts full unprocessed configuration.
+      type: string
+      enum:
+      - full
+    - description: The adapter accepts configuration as a sequence.
+      type: string
+      enum:
+      - sequence
+  SchemaKind:
+    oneOf:
+    - description: The schema is returned by running a command.
+      type: object
+      required:
+      - command
+      properties:
+        command:
+          $ref: '#/definitions/SchemaCommand'
+      additionalProperties: false
+    - description: The schema is embedded in the manifest.
+      type: object
+      required:
+      - embedded
+      properties:
+        embedded: true
+      additionalProperties: false
+  SchemaCommand:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to get the schema.
+        type: string
+      args:
+        description: The arguments to pass to the command.
+        type:
+        - array
+        - 'null'
+        items:
+          type: string
+
