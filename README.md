@@ -25,6 +25,8 @@ Our website can be found at: <https://learndsc.guide>.
 
 Start your journey by picking the level you're comfortable with:
 
+- [Complete new to DSC](https://learndsc.guide/docs/initiate/)
+
 ## Feedback
 
 If you have any questions, comments, or additional feedback, check out the open issues first. If you cannot find what you're looking for, please open an [issue](https://github.com/Gijsreyn/learn-dsc/issues)
