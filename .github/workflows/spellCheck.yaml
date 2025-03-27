@@ -1,8 +1,5 @@
 name: Spell Checking
 
-permissions:
-  actions: read
-
 on:
   push:
     branches:
