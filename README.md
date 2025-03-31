@@ -8,7 +8,7 @@ Hello👋! This is the repository housing content for learning DSC. The reposito
 
 ## What is DSC?
 
-Learn DSC is a learning course you can follow to learn everything about Microsoft Desired State Configuration (v3). Inspired by other fellow content creators, this training platform helps both beginners and advanced users learn new skills in DSC v3. This version has been completely rewritten in Rust, moving away from its PowerShell foundation. Our structured learning path is a bit geeky and follows the Jedi-inspired ranking system, guiding you from the initiate level to Jedi Master.
+Learn DSC is a learning course you can follow to learn everything about Microsoft Desired State Configuration (DSC). Inspired by other fellow content creators, this training platform helps both beginners and advanced users learn new skills in DSC v3. This version has been completely rewritten in Rust, moving away from its PowerShell foundation. Our structured learning path is a bit geeky and follows the Jedi-inspired ranking system, guiding you from the initiate level to Jedi Master.
 
 If you are sitting in one of these roles:
 
