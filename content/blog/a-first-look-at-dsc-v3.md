@@ -13,4 +13,3 @@ On many popular forums, the question arose “is Desired State Configuration sti
 You might also not be aware that the PowerShell team has released the alpha version of DSCv3, which is publicly available.
 
 This blog post was posted on [Medium](https://medium.com/@gijsreijn/a-first-look-at-desired-state-configuration-v3-379ee8181d6a).
-

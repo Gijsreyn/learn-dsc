@@ -11,7 +11,7 @@ To install DSC for Windows from GitHub, follow these steps:
 
 ### Step 1 - Determine your OS architecture
 
-There are multiple ways to determine the operating system (OS) architecture. The following three demonstrate using the command prompt PowerShell, or msinfo.
+There are multiple ways to determine the operating system (OS) architecture. The following three demonstrate using the command prompt, PowerShell, or msinfo.
 
 1. Open a command prompt and type: `echo %PROCESSOR_ARCHITECTURE%`.
 2. Open a PowerShell terminal session and type: `[System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture`.
@@ -39,7 +39,7 @@ When the download is finished, you can expand the files to extract them to your 
 
 1. Right-click the file and select _Extract All..._
 2. Extract the files to `C:\Users\<userProfile>\AppData\Local\dsc` by replacing the `<userProfile>` with your profile name.
-3. Open a command prompt and type `rundll32.exe sysdm.cpl,EditEnvironmentVariables` to open the environment variables.
+3. Open a command prompt and type: `rundll32.exe sysdm.cpl,EditEnvironmentVariables` to open the environment variables.
 4. In your user variables, edit your `PATH` environment variable and include the path `C:\Users\<userProfile>\AppData\Local\dsc`.
 
 ### Step 4 - Verify the installation
@@ -52,12 +52,6 @@ When the download is finished, you can expand the files to extract them to your 
   ```
 
 This should return the DSC version installed.
-
-{{< figure
-      src="/images/dsc-version.png"
-      alt="DSC version"
-      caption="Figure 2: The DSC version installed"
->}}
 
 > [!IMPORTANT]
 > After the files are extracted, make sure the files are unblocked in your file system.
@@ -83,7 +77,7 @@ To install DSC using the PSDSC module, follow the below steps:
     Install-DscExe
     ```
 
-This installs DSC in your `"$env:LOCALAPPDAT\dsc"` folder. To verify the result, run `dsc --version`
+This installs DSC in your `$env:LOCALAPPDAT\dsc` folder. To verify the result, run `dsc --version`
 
   ```powershell
   dsc --version
