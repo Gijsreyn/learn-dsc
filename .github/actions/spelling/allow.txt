@@ -11,3 +11,11 @@ passthrough
 rgba
 versioning
 webp
+EJK
+Gijs
+lastmod
+linktitle
+meetups
+microsofts
+Reijn
+sourced
