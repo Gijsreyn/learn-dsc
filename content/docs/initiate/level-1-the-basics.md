@@ -50,7 +50,7 @@ To display the possible values for each option, you can simply type in: `dsc` in
       caption="Figure 1: The commands and options available"
 >}}
 
-If you're unsure about a command, you can always ask the CLI for help. This applies to each subcommand. For example, to get help for the config command, type: `dsc config --help`.
+If you're unsure about a command, you can always ask the CLI for help. This applies to each subcommand. For example, to get help for the `config` command, type: `dsc config --help`.
 
 ```plaintext
 Apply a configuration document
@@ -67,7 +67,7 @@ Commands:
 ...
 ```
 
-You now know how you can ask the CLI for help, but what about DSC resources in general? Before looking at a DSC resource and run it, it will be helpful to have a completion script registered. A completion script allows you to easily perform so called tab-completions when using the CLI from a command-line shell, like PowerShell or the Bash terminal. The following steps demonstrates how you can add a completion script in a PowerShell profile:
+You now know how you can ask the CLI for help, but what about DSC resources in general? Before looking at a DSC resource and running it, it will be helpful to have a completion script registered. A completion script allows you to easily perform so-called tab-completions when using the CLI from a command-line shell, like PowerShell or the Bash terminal. The following steps demonstrate how you can add a completion script in a PowerShell profile:
 
 1. Open a PowerShell session.
 2. Execute `dsc completer powershell | clip` to add the completion script to the clipboard.
@@ -82,7 +82,7 @@ Depending on the version of PowerShell you are using, once you have added the co
 
 ## Executing Your First DSC Resource
 
-To run your first DSC resource, you need to understand what a DSC resource is. A DSC resource allows you to define the desired state of a specific part of your system and ensures it remains in that state. The logic behind a DSC resource can be written in any programming language, such as a bash script, a .NET executable, or a CLI written in Rust. As long as the tool you create follows certain schema semantics, it can be used as a DSC resource.
+To run your first DSC resource, it's important to understand what a DSC resource actually is. At its core, a DSC resource is a package of code that lets you define the desired state for a specific part of your system — whether that's a Windows Server, an iMac, or Linux machine — and ensures it stays in that state when enforced by orchestration tools. What makes DSC resources flexible is that they can be written in virtually any programming language. You could use bash scripts, create a .NET executable, or even CLIs written in Rust. The only requirement is that your code adheres to the schema semantics of `dsc`, allowing it to participate and be utilized as a _DSC resource_.
 
 Now you know what a DSC resource is, you need to know how to find them. To do so, you can use the `dsc resource list` command. What the command will do in the background is the following:
 
@@ -94,7 +94,7 @@ Now you know what a DSC resource is, you need to know how to find them. To do so
     - `.dsc.resource.yml`
     - `.dsc.resource.yaml`
 
-If files with these suffixes are found in the mentioned directories, DSC will load them, search for the required elements, and display the results in the console. If the required elements are missing, DSC will provide a warning indicating which properties are absent. The following output shows what DSC has found. These are the builtin resources when you've installed DSC.
+If files with these suffixes are found in the mentioned directories, DSC will load them, search for the required elements, and display the results in the console. If the required elements are missing, DSC will provide a warning indicating which properties are absent. The following output shows what DSC has found. These are the builtin resources when you've installed DSC on a Windows OS.
 
 ```plaintext
 Type                                        Kind      Version  Capabilities  RequireAdapter  Description                                                                
@@ -115,7 +115,7 @@ Microsoft/OSInfo                            Resource  0.1.0    g-----e-         
 > [!NOTE]
 > For now, don't worry about the suffix. You'll learn more about it in the next level.
 
-It can be an excruciating list at first sight. That's why it can be filtered down to focus on the `Resource` kind for now. The following command demonstrates how to find all DSC resources of type `resource`.
+To filter down the list, you can focus on the `resource` kind for now. The following command demonstrates how to find all DSC resources of type `resource`.
 
 ```powershell
 dsc resource list |
@@ -134,14 +134,14 @@ Microsoft.Windows/Registry                 {get, set, whatIf, delete}
 Microsoft/OSInfo                           {get, export}
 ```
 
-You now have a filtered list of DSC resources that are builtin when you've installed DSC.
+You now have a filtered list of _command-based_ DSC resources that are builtin.
 
 > [!IMPORTANT]
 > The output shown is from a Windows machine. If you are using a different operating system, the output may be different.
 
 In the output table when `dsc resource list` is run, flags such as `gs--t---` are displayed. When the output is piped (|) and converted with `ConvertFrom-Json`, the actual capability full names are shown. This demonstrates what the resource has implemented and what capabilities you can call using `dsc resource <capability>`.
 
-You got the first piece how you can call the DSC resource. Let's pick the `Microsoft/OSInfo` resource. If you want to use the `get` capability, the command would start with `dsc resource get --resource Microsoft/OSInfo`. There is only one piece missing to execute the DSC resource: what input _might_ be required to interact with it?
+You got the first piece how you can call the DSC resource. Let's pick the `Microsoft/OSInfo` resource to experiment with. If you want to use the `get` capability, the command would start with `dsc resource get --resource Microsoft/OSInfo`. There is only one piece missing to execute the DSC resource: what input _might_ be required to interact with it?
 
 DSC resources follow a certain schema. You should see a schema somewhat as a contract when you purchase a house. In the contract it clearly states what will be _in_ the house and what you will get _out_ of it when you purchase it. To see such contract, or schema, you can use the `dsc resource schema` command. When you want to display it for the `Microsoft/OSInfo` resource, you can run:
 
@@ -214,14 +214,9 @@ You have successfully ran your first DSC resource. Before making things to compl
 
 You've already learned the `--help` option for each subcommand. Make this a habit if you aren't certain about a command. Each time you append the `--help` option, it will reveal the help information.
 
-The official documentation is published on Microsoft Learn, the platform from Microsoft for all learning materials. You can find it using the following link: <https://learn.microsoft.com/en-us/powershell/>. In the tiles you can search and find _PowerShell DSC_.
+The official documentation is published on Microsoft Learn, the platform from Microsoft for all learning materials. You can find it using the following link: <https://learn.microsoft.com/en-us/powershell/>. In the tiles you can search and find _Microsoft DSC_.
 
 To stay up to date with the latest releases, you can check out the official repository at: <https://github.com/PowerShell/DSC/releases>. Always keep your CLI version up to date to get the latest functionality and bug fixes!
-
-There is also a YouTube channel to follow, which is the official DSC community channel found at: <https://www.youtube.com/@dsccommunity2958>. The DSC community itself also has:
-
-- Twitter at @dsccommunity
-- Discord in the following link: <https://discordapp.com/invite/AtzXnJM>
 
 ## Lab Questions
 
