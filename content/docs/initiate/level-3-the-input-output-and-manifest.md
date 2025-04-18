@@ -11,17 +11,19 @@ prev: /docs/level-1-the-basics
     <span>Author: Gijs Reijn</span>  
 {{< /hextra/hero-badge >}}
 
-By now, you should have run at least one command using `dsc`. The output displayed in the CLI might look different from what you're used to, especially if you're familiar with previous versions. The output format is YAML (Yet Another Markup Language), chosen by the team primarily for its readability. There is however a transformation happening when the engine handles the input and output. Take for example the following command to output the results to a file:
+By now, you learned how to run commands using `dsc`. The output format returned to the console was YAML (Yet Another Markup Language), chosen by the team for its readability. Compared to previous versions, mainly PowerShell objects are returned to the console.
+
+There is however a transformation happening when the engine handles the input and output. Take for example the following command to output the results to a file:
 
 ```sh
 dsc resource list > list.json
 ```
 
 ```json
-{"type":"Microsoft.DSC.Debug/Echo","kind":"resource","version":"1.0.0","capabilities":["get","set","test"],"path":"C:\\Users\\User\\AppData\\Local\\dsc\\echo.dsc.resource.json","description":null // #Limited }
+{"type":"Microsoft.DSC.Debug/Echo","kind":"resource","version":"1.0.0","capabilities":["get","set","test"],"path":"C:\\Users\\User\\AppData\\Local\\dsc\\echo.dsc.resource.json","description":null // # Limited }
 ```
 
-When output is redirected in your shell, such as to a file in this example, the data is formatted in JSON. By default, the engine uses JSON for both input and output unless a different format is explicitly specified. That's why in this next step further, you will learn:
+When output is _redirected_ or _piped_ in the shell, the data format is JSON. By default, the engine's input and output is JSON, unless specified otherwise. That's why in this next step of the template, you'll learn:
 
 - Understanding input formats in DSC
 - Exploring output transformations
@@ -29,9 +31,9 @@ When output is redirected in your shell, such as to a file in this example, the 
 
 ## Understanding Input Formats in DSC
 
-Let's take a step back and use the `dsc resource` command to explore the input and output in a safe manner without affecting your system. For that, you can leverage the `Microsoft.DSC.Debug/Echo` resource. This resource _echos_ back what you've entered. Before doing so, let's look at an earlier example.
+Let's take a step back and use the `dsc resource` command to explore the input and output in a safe manner without affecting your system. For that, you can leverage the `Microsoft.DSC.Debug/Echo` resource. This resource _echos_ back what you've entered to the console application your working in. Let's grab the example from earlier exercises.
 
-As mentioned, the primary driver for the engine is JSON. Remember when you entered the temple, there was the following example:
+DSC's engine primary driver is JSON. Make note of that. Now, take a look at the exercise done earlier:
 
 ```powershell
 dsc resource list |
@@ -40,9 +42,12 @@ Where-Object -Property Kind -EQ 'resource' |
 Select-Object -Property type, capabilities
 ```
 
-This example demonstrates how you can use PowerShell to process the output returned by the CLI. PowerShell provides commands that make it easy to transform CLI output into PowerShell objects. For instance, you can see the `ConvertFrom-Json` command to convert JSON output, and then filter and select specific properties using `Where-Object` and `Select-Object`.
+This example demonstrates how you can use PowerShell to process the output returned by the CLI. PowerShell provides commands that make it easy to transform CLI output into PowerShell objects. For instance, you can see the `ConvertFrom-Json` command to convert JSON output, and then filter and select specific properties using `Where-Object` and `Select-Object` commands.
 
-Whilst PowerShell runs both on MacOS and Linux, you can use other widely used tools for parsing, filtering, and modifying JSON by using for example [jq](https://jqlang.org/). For this section, PowerShell is used, but know there are other possibilities.
+PowerShell isn't limited to Windows anymore. It can run on MacOS and Linux, but you don't have to use it. Instead, there are other tools for parsing, filtering, and modifying JSON by using for example [jq](https://jqlang.org/). 
+
+> [!TIP]
+> Know that these tools are available on the market and you're not limited in using PowerShell.
 
 Time to examine the possibilities to input the required properties by executing the `Microsoft.DSC.Debug/Echo` resource. First, run the following command: `dsc resource schema --resource Microsoft.DSC.Debug/Echo` to indicate what input is required.
 
@@ -106,7 +111,7 @@ Set-Content -Path $outFile -Value $content
 dsc resource get --resource Microsoft.DSC.Debug/Echo --file $outFile
 ```
 
-You have multiple input formats in DSC, including the possible options to sent it towards the DSC resource if it _requires it_. Let's take a look at the output transformations.
+You have now learned about the multiple input formats DSC can use. You've seen the possible options by either using `--input` or `--file` if the DSC resource requires it. In the next section, you are going to learn about the output transformations.
 
 ## Explore Output Transformations in DSC
 
@@ -154,7 +159,7 @@ By specifying the `--output-format` option, you can control how the CLI formats 
 
 ## The DSC Resource Manifest
 
-Without the DSC resource manifest, DSC will be a blank check. Remember when you started about these file suffixes? This is the resource manifest. The resource manifest is the critical component, which provides metadata about a _resource_. To see it in a simplistic way, you can output the resource manifest of the `Microsoft.Windows/Registry` resource by running:
+Without the DSC resource manifest, DSC will be a blank check. In level 1, you learned the steps what happens in the background when calling `dsc resource list`. These file suffixes are the resource manifest it attempted to look for. The resource manifest is the critical component, which provides metadata about a _resource_. To see it in a simplistic way, you can output the resource manifest of the `Microsoft.Windows/Registry` resource by running:
 
 ```powershell
 dsc resource list --description "Manage Windows Registry keys and values" | 
@@ -182,7 +187,7 @@ What you see here, is the following:
 
 1. The executable that will be called: `registry`
 2. The arguments that are passed along: `config get`
-3. The input option that is mandatory: `--input`
+3. The input argument that is mandatory: `--input`
 
 To make this example a little bit more clearer, you can literally run the `registry` executable using the following command:
 
@@ -193,7 +198,7 @@ registry config get --input (@{keyPath = 'HKCU'} | ConvertTo-Json)
 > [!TIP]
 > Wondering how you can get the input for the executable? Run `registry schema` or `dsc resource schema --resource Microsoft.Windows/Registry` to see the required and optional input.
 
-DSC wraps itself around the executable and calls it underneath. The same example can be called using `dsc` as followed:
+DSC wraps itself around the executable and calls it by spawning it as a _child process_. The same example can be called using `dsc` as followed:
 
 ```sh
 dsc resource get --resource Microsoft.Windows/Registry --input 'keyPath: HKCU'
@@ -207,18 +212,18 @@ If you put on the tracing level to `trace`, you can spot what DSC does:
 2025-03-21T08:22:24.098197Z DEBUG dsc_lib::dscresources::command_resource: 850: trace_message="PID 7140: registry: 51: Get input: {\"keyPath\":\"HKCU\"}"
 ```
 
-Let's digest it further by looking to the key elements.
+Let's look at some key elements in more depth.
 
 ### Key Elements of the Manifest
 
-You have seen now at least one element of the resource manifest which is important. The `capabilities` element defines the executables capabilities. In the `Microsoft.Windows/Registry`, there are four capabilities:
+You have seen now at least one element of the resource manifest which is important. The `capabilities` element defines the executables capabilities. In the `Microsoft.Windows/Registry` resource manifest, there are four capabilities specified:
 
 - `get`
 - `set`
 - `whatIf`
 - `delete`
 
-Each DSC resource should specify the `type` property to define its purpose based on the fully qualified name syntax. This follows the following syntax: `<owner>[.<group>][.<area>]/<name>` allowing organizations to group resources into namespaces. Additionally, the `kind` property provides further context telling what the resource is about. The `Microsoft.Windows/Registry` is of kind `resource`.
+Each DSC resource should specify the `type` property to define its purpose based on the fully qualified name syntax. This follows the following syntax: `<owner>[.<group>][.<area>]/<name>` allowing organizations to group resources into namespaces. Additionally, the `kind` property provides further context telling what the resource is about. The `Microsoft.Windows/Registry` is of kind `resource`, indication it is a command-based DSC resource.
 
 ### Understanding the Role of Schema in DSC
 
