@@ -11,9 +11,9 @@ prev: /docs/initiate/level-3-the-input-output-and-manifest
     <span>Author: Gijs Reijn</span>  
 {{< /hextra/hero-badge >}}
 
-The resource manifest is the backbone of how DSC interacts with resources. That's why understanding and absorbing the resource manifest in your knowledge database (brain), helps you understand the other schematics more effortlessly. Hence, this chapter is dedicated to dive deeper into the resource manifest on a step-by-step basis.
+The resource manifest is the backbone of how DSC interacts with resources. That's why understanding and absorbing the resource manifest in your brain, helps you understand the other schematics more effortlessly. Hence, this chapter is dedicated to dive deeper into the resource manifest on a step-by-step basis.
 
-Brace yourself for it in this part of the temple, as you're going to absorb the resource manifest like a sponge does with all the water, by learning the following topics:
+Brace yourself young initiate. You are going to absorb the resource manifest like a sponge does with all the water. You will go through the following topics:
 
 - The schema URI
 - List of different capabilities
@@ -28,7 +28,7 @@ When you inspect the schema of the resource manifest using the `dsc schema --typ
 
 In this case, the enumeration includes two versions of URLs. One of these URLs uses Microsoft's `aka.ms` URL shortener, which simplifies the URL for easier recall. However, the short URL ultimately redirects to the actual schema location.
 
-Taking by example, let's use the following URL: `https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json`. This URL redirects to the actual schema file hosted at: `https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/bundled/resource/manifest.json`.
+Taking by example, the following URL: `https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json` redirects to the actual schema file hosted at: `https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/bundled/resource/manifest.json`.
 
 {{< figure
       src="/images/resource-manifest-schema-uri.png"
@@ -102,7 +102,7 @@ The `manifest.vscode.json` versions differ slightly as they are specifically des
       caption="Figure 2: Visual Studio Code enhanced authoring"
 >}}
 
-Most importantly to remember, is the schema will evolve over time. New versions may be introduced that differ from the version used in your CLI. Whenever your authoring a resource manifest, always use the latest schema version available. For a full list of schemas, you can go to: <https://github.com/PowerShell/DSC/tree/main/schemas>
+Schemas evolve over time. New versions may be introduced that differ from the version used in your CLI. Whenever your authoring a resource manifest, always use the latest schema version available. For a full list of schemas, you can go to: <https://github.com/PowerShell/DSC/tree/main/schemas>
 
 ## List of Different Capabilities
 
@@ -119,7 +119,7 @@ Let's look closely to each of the capabilities
 
 ### Get
 
-You have already used this capability when you called the DSC resource `Microsoft/OSInfo` or `Microsoft.Windows/Registry`. It gets the current state of the DSC resource. Capability is often referred to as _method_ and this can be seen in the resource manifest:
+You have already used this capability when you called the DSC resource `Microsoft/OSInfo` or `Microsoft.Windows/Registry`. It gets the current state of the DSC resource. Capability is often referred to as _method_ and this is visible in the resource manifest.
 
 ```yaml
 GetMethod:
@@ -144,7 +144,7 @@ GetMethod:
         - type: 'null'
 ```
 
-You have already digested some of the parts on the get capability, but the resource manifest reveals the information. The `executable` property is always mandatory. It should be of type `string`. Then, looking at the definition of `ArgKind`, the following properties are available:
+You've seen the first part of the `get` capability. The resource manifest reveals more information, such as the `executable` property, which is mandatory and should be of type `string`. Looking further at the definition `ArgKind`, the following properties are available:
 
 ```yaml
 ArgKind:
@@ -166,9 +166,9 @@ ArgKind:
           - 'null'
 ```
 
-When defining the `args` object in your resource manifest, the `anyOf` keyword allows for two flexible options. You can either provide a straightforward string as the argument or define a more complex object. This object must include the `jsonInputArg` property, which specifies the argument that accepts the JSON input object or string. Additionally, you can use the `mandatory` property to indicate whether the argument is required.
+When defining the `args` object in your resource manifest, the `anyOf` keyword allows for two flexible options. You can either provide a straightforward string as the argument or define a more complex object. This object must include the `jsonInputArg` property, specifying the argument which accepts a JSON input object or string. You can add the `mandatory` property to indicate if input is required or not.
 
-To understand the concept more and link the schema towards a DSC resource, you can take a look at the `Microsoft.Windows/Registry` resource, which perfectly illustrates it in the following snippet:
+To understand the concept more and link the schema against a DSC resource, you can take a look at the `Microsoft.Windows/Registry` resource. The following snippet illustrates the properties in the current resource manifest:
 
 ```json
 "get": {
@@ -199,7 +199,7 @@ InputKind:
       - stdin
 ```
 
-Most CLIs pass a JSON object through STDIN. STDIN stands for standard input and is commonly used in command-line interfaces representing the input stream which a program reads data from. In this case, DSC sends that data to the executable. Alternatively, the input can also be set as environment variable.
+Most CLIs pass a JSON object through STDIN. STDIN stands for standard input and is commonly used in command-line interfaces representing the input stream which a program reads data from. In this case, DSC sends data to the executable. Alternatively, the input can also be set as environment variable.
 
 ### Set
 
@@ -275,12 +275,86 @@ For example, in the `Microsoft.Windows/Registry` resource, the `Set` capability 
 
 In the `SetMethod`, there are two properties added. The `implementsPretest` property in the resource manifest indicates whether the resource performs its own validation. In this case, it will call the `Test` method itself if it has been set to `True`. In the `Microsoft.Windows/Registry` it hasn't been set. However, if it was set to `True`, you can imagine that the resource itself would require to call the `Test` method when you want to set a `keyPath` even it was already present.
 
-The `handlesExist` property has been added to the resource manifest and stems of from previous DSC versions. If a resource in itself handles the `_exist` property, you can turn on this flag to `True`. This concept is more advanced and will be later handled.
+The last property `handlesExist` is newly added to the resource manifest. It helps indicating to `dsc` if the `_exist` property can be used in `set` operations for creating or deleting instances. This concept is more advanced and will be touch upon later.
 
 By defining the `Set` capability in this way, the resource manifest ensures that the resource can be configured to match the desired state.
 
 ### Test
 
+The `Test` capability tests the state of the resource. Imagine you wanna know if the `HKLM\CustomPath` has been added correctly added. Invoking `dsc resource test --resource Microsoft.Windows/Registry --input {"keyPath":"HKLM\\CustomPath"}` will check if the property `keyPath` exists.
+
+The following YAML snippet illustrates the `Test` capability:
+
+```yaml
+TestMethod:
+    type: object
+    required:
+    - executable
+    properties:
+      executable:
+        description: The command to run to test the state of the resource.
+        type: string
+      args:
+        description: The arguments to pass to the command to perform a Test.
+        type:
+        - array
+        - 'null'
+        items:
+          $ref: '#/definitions/ArgKind'
+      input:
+        description: How to pass required input for a Test.
+        anyOf:
+        - $ref: '#/definitions/InputKind'
+        - type: 'null'
+      return:
+        description: The type of return value expected from the Test method.
+        anyOf:
+        - $ref: '#/definitions/ReturnKind'
+        - type: 'null
+```
+
+There is a slight difference between the elements from the `Get` capability. The `ReturnKind` definition returns a value expected from the `test` method.
+
+```yaml
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/definitions/returnKind.json",
+  "title": "Return Kind",
+  "type": "string",
+  "enum": [
+    "state",
+    "stateAndDiff"
+  ],
+  "default": "state",
+  "$comment": "While the enumeration for return kind is the same for the `set` and `test`\nmethod, the way it changes the behavior of the command isn't. The description\nkeyword isn't included here because the respective schemas for those methods\ndocument the behavior themselves."
+}
+```
+
+Again, `Microsoft.Windows/Registry` DSC resource is a resource to illustrate this. If you had invoked the command earlier to test if the `keyPath` existed, you would have noticed two properties returned:
+
+- `inDesiredState`
+- `differingProperties`
+
+Even thought the resource itself hasn't defined the `Test` capability in the resource manifest, `dsc` performs a synthetic test. The synthetic test attempts to look at the properties and adds any if it is different. In the following example, it shows when the path didn't exist:
+
+```yaml
+desiredState:
+  keyPath: HKLM\CustomPath
+actualState:
+  keyPath: HKLM\CustomPath
+  _exist: false
+inDesiredState: false
+differingProperties:
+- _exist
+```
+
+If it did, the `differingProperties` would have been an empty array `[]`. The returned properties are useful to see what properties aren't in the state you want them to be.
+
+### Delete
+
+The `Delete` capability has been added in the engine to simplify resource authoring and provide a clear distinction from the `Set` capability. While `Set` is responsible for creating or updating a resource to match a desired state, `Delete` specifically handles the removal of resource instances. This separation makes the logical code flow in the engine less.
+
+Learning about the `Delete` capability is done later when you will learn about configuration documents.
 
 ## About the Kind Element
 

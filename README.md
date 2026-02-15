@@ -1,3 +1,9 @@
+> [!WARNING]
+> **This project is no longer maintained and has been archived.**
+> 
+> The course content has moved to: https://www.idontlikeai.dev/courses/
+> The website will still be online till the domain expired.
+
 # Welcome
 
 Hello👋! This is the repository housing content for learning DSC. The repository has multiple workflows to help get clean content in.
